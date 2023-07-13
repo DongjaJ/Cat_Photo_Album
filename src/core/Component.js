@@ -1,3 +1,4 @@
+import { isSameObject } from '../utils/helper.js';
 export default class Component {
   $target;
   state = {};
@@ -17,6 +18,7 @@ export default class Component {
   setState(newState) {
     const prevState = this.state;
     const nextState = { ...prevState, ...newState };
+    if (isSameObject(prevState, nextState)) return;
     this.state = nextState;
     this.render();
   }

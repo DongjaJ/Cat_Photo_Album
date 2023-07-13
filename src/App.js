@@ -4,11 +4,7 @@ import { request } from './apis/api.js';
 import Loading from './components/Loading.js';
 import BreadCrumb from './components/BreadCrumb.js';
 import ImageViewer from './components/ImageViewer.js';
-import {
-  validate,
-  validateNode,
-  validateNodeArray,
-} from './utils/validation.js';
+import { validateNode, validateNodeArray } from './utils/validation.js';
 
 export default class App extends Component {
   setup() {
