@@ -4,6 +4,11 @@ import { request } from './apis/api.js';
 import Loading from './components/Loading.js';
 import BreadCrumb from './components/BreadCrumb.js';
 import ImageViewer from './components/ImageViewer.js';
+import {
+  validate,
+  validateNode,
+  validateNodeArray,
+} from './utils/validation.js';
 
 export default class App extends Component {
   setup() {
@@ -87,11 +92,18 @@ export default class App extends Component {
 
   async onClickBreadCrumb(id) {
     if (id) {
-      const nextPaths = [...this.state.paths];
-      const pathIndex = nextPaths.findIndex((path) => path.id === id);
+      const { paths } = this.state;
+      const pathIndex = paths.findIndex((path) => path.id === id);
+      const nextPaths = paths.slice(0, pathIndex + 1);
+
+      validateNodeArray({
+        nodeArray: nextPaths,
+        nodeArrayName: Object.keys({ nextPaths })[0],
+      });
+
       this.setState({
         ...this.state,
-        paths: nextPaths.slice(0, pathIndex + 1),
+        paths: nextPaths,
       });
     } else {
       this.setState({
@@ -107,6 +119,11 @@ export default class App extends Component {
     const nextPaths = [...this.state.paths];
     nextPaths.pop();
 
+    validateNodeArray({
+      nodeArray: nextPaths,
+      nodeArrayName: Object.keys({ nextPaths })[0],
+    });
+
     this.setState({
       ...this.state,
       paths: nextPaths,
@@ -121,6 +138,9 @@ export default class App extends Component {
   async onClickNode(node) {
     if (node.type === 'DIRECTORY') {
       await this.fetchNodes(node.id);
+
+      validateNode(node);
+
       this.setState({
         ...this.state,
         paths: [...this.state.paths, node],
@@ -144,6 +164,11 @@ export default class App extends Component {
     });
 
     const nodes = await request(id ? `/${id}` : '/');
+
+    validateNodeArray({
+      nodeArray: nodes,
+      nodeArrayName: Object.keys({ nodes })[0],
+    });
 
     this.setState({
       ...this.state,
